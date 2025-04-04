@@ -8,7 +8,7 @@ ENV MYSQL_USER=usuario
 ENV MYSQL_PASSWORD=senha
 
 # Exponha a porta padrão do MySQL
-EXPOSE 3306
+EXPOSE 3307
 
 # Copie um arquivo SQL para inicializar o banco de dados (opcional)
 # Se você tiver um script SQL para criar tabelas ou popular o banco, coloque-o no diretório /docker-entrypoint-initdb.d/

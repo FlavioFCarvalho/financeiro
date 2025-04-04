@@ -12,4 +12,12 @@ CREATE TABLE transacao (
                            CONSTRAINT fk_categoria FOREIGN KEY (categoria_id) REFERENCES categoria(id)
 );
 
+-- Remover a coluna antiga
+ALTER TABLE transacao DROP COLUMN data;
+
+-- Adicionar as novas colunas
+ALTER TABLE transacao ADD COLUMN data_lancamento DATE NOT NULL;
+ALTER TABLE transacao ADD COLUMN data_vencimento DATE NOT NULL;
+
+
 INSERT INTO categoria (nome) VALUES ('Alimentação'), ('Transporte'), ('Lazer'), ('Educação');

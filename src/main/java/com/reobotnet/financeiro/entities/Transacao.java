@@ -5,7 +5,7 @@ import com.reobotnet.financeiro.enuns.TipoTransacao;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -23,18 +23,21 @@ public class Transacao {
     @Column(nullable = false, length = 10)
     private TipoTransacao tipo;
 
-    @ManyToOne(optional = false) // Relacionamento ManyToOne com Categoria
-    @JoinColumn(name = "categoria_id", nullable = false) // Define a coluna de chave estrangeira
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
     @Column(nullable = false)
-    private LocalDateTime data;
+    private LocalDate dataLancamento;
 
-    @Column(nullable = false, length = 255) // Campo descrição com limite de 255 caracteres
+    @Column(nullable = false)
+    private LocalDate dataVencimento;
+
+    @Column(nullable = false, length = 255)
     private String descricao;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20) // Campo para o meio de pagamento
+    @Column(nullable = false, length = 20)
     private MeioPagamento meioPagamento;
 
     // Construtor padrão
@@ -42,12 +45,15 @@ public class Transacao {
     }
 
     // Construtor com todos os argumentos
-    public Transacao(Long id, BigDecimal valor, TipoTransacao tipo, Categoria categoria, LocalDateTime data, String descricao, MeioPagamento meioPagamento) {
+    public Transacao(Long id, BigDecimal valor, TipoTransacao tipo, Categoria categoria,
+                     LocalDate dataLancamento, LocalDate dataVencimento,
+                     String descricao, MeioPagamento meioPagamento) {
         this.id = id;
         this.valor = valor;
         this.tipo = tipo;
         this.categoria = categoria;
-        this.data = data;
+        this.dataLancamento = dataLancamento;
+        this.dataVencimento = dataVencimento;
         this.descricao = descricao;
         this.meioPagamento = meioPagamento;
     }
@@ -85,12 +91,20 @@ public class Transacao {
         this.categoria = categoria;
     }
 
-    public LocalDateTime getData() {
-        return data;
+    public LocalDate getDataLancamento() {
+        return dataLancamento;
     }
 
-    public void setData(LocalDateTime data) {
-        this.data = data;
+    public void setDataLancamento(LocalDate dataLancamento) {
+        this.dataLancamento = dataLancamento;
+    }
+
+    public LocalDate getDataVencimento() {
+        return dataVencimento;
+    }
+
+    public void setDataVencimento(LocalDate dataVencimento) {
+        this.dataVencimento = dataVencimento;
     }
 
     public String getDescricao() {
@@ -109,7 +123,14 @@ public class Transacao {
         this.meioPagamento = meioPagamento;
     }
 
-    // Implementação de equals e hashCode
+    @PrePersist
+    protected void onCreate() {
+        if (dataLancamento == null) {
+            dataLancamento = LocalDate.now();
+        }
+    }
+
+    // equals e hashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -3,12 +3,17 @@ package com.reobotnet.financeiro.services;
 import com.reobotnet.financeiro.dtos.TransacaoDTO;
 import com.reobotnet.financeiro.entities.Categoria;
 import com.reobotnet.financeiro.entities.Transacao;
+import com.reobotnet.financeiro.enuns.MeioPagamento;
+import com.reobotnet.financeiro.enuns.TipoTransacao;
+import com.reobotnet.financeiro.exceptions.DataLancamentoInvalidaException;
 import com.reobotnet.financeiro.repositories.CategoriaRepository;
 import com.reobotnet.financeiro.repositories.TransacaoRepository;
+import com.reobotnet.financeiro.utils.MessageUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,8 +26,31 @@ public class TransacaoService {
     @Autowired
     private CategoriaRepository categoriaRepository;
 
+    @Autowired
+    private MessageUtil messageUtil;
+
     public TransacaoDTO criar(TransacaoDTO dto) {
         Transacao transacao = fromDTO(dto);
+
+        // Validação: data de lançamento não pode ser no futuro
+        if (transacao.getDataLancamento() != null &&
+                transacao.getDataLancamento().isAfter(LocalDate.now())) {
+            throw new DataLancamentoInvalidaException(messageUtil.get("transacao.data.lancamento.invalida"));
+        }
+
+        // Regra para definir o vencimento baseado na data de lançamento
+        if (transacao.getTipo() == TipoTransacao.DEBITO &&
+                transacao.getMeioPagamento() == MeioPagamento.CARTAO_CREDITO &&
+                transacao.getDataVencimento() == null) {
+
+            LocalDate dataBase = transacao.getDataLancamento() != null
+                    ? transacao.getDataLancamento()
+                    : LocalDate.now();
+
+            LocalDate vencimento = dataBase.plusMonths(1).withDayOfMonth(5);
+            transacao.setDataVencimento(vencimento);
+        }
+
         transacao = transacaoRepository.save(transacao);
         return toDTO(transacao);
     }

@@ -13,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,15 +33,32 @@ public class TransacaoService {
     public TransacaoDTO criar(TransacaoDTO dto) {
         Transacao transacao = fromDTO(dto);
 
-        // Validação: data de lançamento não pode ser no futuro
+        validarDataLancamento(transacao);
+        aplicarVencimentoSemCartaoCredito(transacao);
+        validarDataVencimentoObrigatoria(transacao);
+        aplicarVencimentoCartao(transacao);
+        validarDataVencimentoPosterior(transacao);
+
+        transacao = transacaoRepository.save(transacao);
+        return toDTO(transacao);
+    }
+
+    private void validarDataLancamento(Transacao transacao) {
         if (transacao.getDataLancamento() != null &&
                 transacao.getDataLancamento().isAfter(LocalDate.now())) {
             throw new DataLancamentoInvalidaException(messageUtil.get("transacao.data.lancamento.invalida"));
         }
+    }
 
-        // Regra para definir o vencimento baseado na data de lançamento
-        if (transacao.getTipo() == TipoTransacao.DEBITO &&
-                transacao.getMeioPagamento() == MeioPagamento.CARTAO_CREDITO &&
+    private void validarDataVencimentoObrigatoria(Transacao transacao) {
+        if (transacao.getMeioPagamento() != MeioPagamento.CARTAO_CREDITO &&
+                transacao.getDataVencimento() == null) {
+            throw new DataLancamentoInvalidaException(messageUtil.get("transacao.data.vencimento.null"));
+        }
+    }
+
+    private void aplicarVencimentoCartao(Transacao transacao) {
+        if (transacao.getMeioPagamento() == MeioPagamento.CARTAO_CREDITO &&
                 transacao.getDataVencimento() == null) {
 
             LocalDate dataBase = transacao.getDataLancamento() != null
@@ -50,10 +68,30 @@ public class TransacaoService {
             LocalDate vencimento = dataBase.plusMonths(1).withDayOfMonth(5);
             transacao.setDataVencimento(vencimento);
         }
-
-        transacao = transacaoRepository.save(transacao);
-        return toDTO(transacao);
     }
+
+    private void aplicarVencimentoSemCartaoCredito(Transacao transacao) {
+        if ((transacao.getMeioPagamento() == MeioPagamento.TICKET ||
+                transacao.getMeioPagamento() == MeioPagamento.DINHEIRO ||
+                 transacao.getMeioPagamento() == MeioPagamento.CARTAO_DEBITO ) &&
+                (transacao.getTipo() == TipoTransacao.DEBITO ||
+                transacao.getTipo() == TipoTransacao.CREDITO) &&
+                transacao.getDataLancamento() != null) {
+
+            transacao.setDataVencimento(transacao.getDataLancamento());
+        }
+    }
+
+
+
+    private void validarDataVencimentoPosterior(Transacao transacao) {
+        if (transacao.getDataLancamento() != null &&
+                transacao.getDataVencimento() != null &&
+                transacao.getDataVencimento().isBefore(transacao.getDataLancamento())) {
+            throw new DataLancamentoInvalidaException(messageUtil.get("transacao.data.vencimento.menor.lancamento"));
+        }
+    }
+
 
     public List<TransacaoDTO> listarTodas() {
         return transacaoRepository.findAll()
@@ -86,6 +124,15 @@ public class TransacaoService {
         transacao = transacaoRepository.save(transacao);
         return toDTO(transacao);
     }
+
+    public BigDecimal calcularSaldo() {
+        BigDecimal totalCredito = transacaoRepository.somarPorTipo(TipoTransacao.CREDITO);
+        BigDecimal totalDebito = transacaoRepository.somarPorTipo(TipoTransacao.DEBITO);
+
+        return (totalCredito != null ? totalCredito : BigDecimal.ZERO)
+                .subtract(totalDebito != null ? totalDebito : BigDecimal.ZERO);
+    }
+
 
     public void deletar(Long id) {
         if (!transacaoRepository.existsById(id)) {

@@ -1,5 +1,6 @@
 package com.reobotnet.financeiro.services;
 
+import com.reobotnet.financeiro.dtos.SaldoDTO;
 import com.reobotnet.financeiro.dtos.TransacaoDTO;
 import com.reobotnet.financeiro.entities.Categoria;
 import com.reobotnet.financeiro.entities.Transacao;
@@ -125,13 +126,13 @@ public class TransacaoService {
         return toDTO(transacao);
     }
 
-    public BigDecimal calcularSaldo() {
-        BigDecimal totalCredito = transacaoRepository.somarPorTipo(TipoTransacao.CREDITO);
-        BigDecimal totalDebito = transacaoRepository.somarPorTipo(TipoTransacao.DEBITO);
+    public SaldoDTO calcularSaldoDetalhado(LocalDate dataInicial, LocalDate dataFinal) {
+        BigDecimal totalCredito = transacaoRepository.somarPorTipoComData(TipoTransacao.CREDITO, dataInicial, dataFinal);
+        BigDecimal totalDebito = transacaoRepository.somarPorTipoComData(TipoTransacao.DEBITO, dataInicial, dataFinal);
 
-        return (totalCredito != null ? totalCredito : BigDecimal.ZERO)
-                .subtract(totalDebito != null ? totalDebito : BigDecimal.ZERO);
+        return new SaldoDTO(totalCredito, totalDebito);
     }
+
 
 
     public void deletar(Long id) {

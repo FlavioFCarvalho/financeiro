@@ -1,23 +1,24 @@
 package com.reobotnet.financeiro.controllers;
 
+import com.reobotnet.financeiro.dtos.SaldoDTO;
 import com.reobotnet.financeiro.dtos.TransacaoDTO;
 import com.reobotnet.financeiro.services.TransacaoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/transacoes")
 public class TransacaoController {
 
-    private final TransacaoService transacaoService;
-
-    public TransacaoController(TransacaoService transacaoService) {
-        this.transacaoService = transacaoService;
-    }
+    @Autowired
+    private TransacaoService transacaoService;
 
     @PostMapping
     public ResponseEntity<TransacaoDTO> criar(@RequestBody TransacaoDTO dto) {
@@ -50,8 +51,13 @@ public class TransacaoController {
     }
 
     @GetMapping("/saldo")
-    public ResponseEntity<BigDecimal> obterSaldo() {
-        BigDecimal saldo = transacaoService.calcularSaldo();
+    public ResponseEntity<SaldoDTO> obterSaldo(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate dataInicial,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate dataFinal
+    ) {
+        SaldoDTO saldo = transacaoService.calcularSaldoDetalhado(dataInicial, dataFinal);
         return ResponseEntity.ok(saldo);
     }
 }

@@ -12,6 +12,8 @@ import com.reobotnet.financeiro.repositories.TransacaoRepository;
 import com.reobotnet.financeiro.utils.MessageUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -94,11 +96,9 @@ public class TransacaoService {
     }
 
 
-    public List<TransacaoDTO> listarTodas() {
-        return transacaoRepository.findAll()
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+    public Page<TransacaoDTO> listarTodas(Pageable pageable) {
+        return transacaoRepository.findAll(pageable)
+                .map(this::toDTO); // converte cada Transacao em TransacaoDTO
     }
 
     public TransacaoDTO buscarPorId(Long id) {

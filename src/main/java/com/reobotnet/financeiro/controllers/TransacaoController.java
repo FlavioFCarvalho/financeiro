@@ -3,6 +3,8 @@ package com.reobotnet.financeiro.controllers;
 import com.reobotnet.financeiro.dtos.SaldoDTO;
 import com.reobotnet.financeiro.dtos.TransacaoDTO;
 import com.reobotnet.financeiro.services.TransacaoService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -27,9 +29,9 @@ public class TransacaoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TransacaoDTO>> listarTodas() {
-        List<TransacaoDTO> lista = transacaoService.listarTodas();
-        return ResponseEntity.ok(lista);
+    public ResponseEntity<Page<TransacaoDTO>> listarTodas(Pageable pageable) {
+        Page<TransacaoDTO> pagina = transacaoService.listarTodas(pageable);
+        return ResponseEntity.ok(pagina);
     }
 
     @GetMapping("/{id}")

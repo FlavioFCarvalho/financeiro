@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
         Map<String, Object> error = new HashMap<>();
         error.put("status", HttpStatus.BAD_REQUEST.value());
         error.put("error", "Parâmetro inválido");
-        error.put("message", "Formato de data inválido. Use o padrão yyyy-MM-dd.");
+        error.put("mensagem", "Data inválida. Verifique se o formato está correto (yyyy-MM-dd) e se a data realmente existe para esse mês");
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }

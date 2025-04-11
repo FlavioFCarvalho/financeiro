@@ -1,10 +1,10 @@
 package com.reobotnet.financeiro.services;
 
 import com.reobotnet.financeiro.dtos.CategoriaDTO;
-import com.reobotnet.financeiro.entities.Categoria;
 import com.reobotnet.financeiro.repositories.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.reobotnet.financeiro.entities.Categoria;
 
 import java.util.List;
 import java.util.stream.Collectors;

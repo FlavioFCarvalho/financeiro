@@ -2,8 +2,8 @@ package com.reobotnet.financeiro.services;
 
 import com.reobotnet.financeiro.dtos.SaldoDTO;
 import com.reobotnet.financeiro.dtos.TransacaoDTO;
-import com.reobotnet.financeiro.entities.Categoria;
 import com.reobotnet.financeiro.entities.Transacao;
+import com.reobotnet.financeiro.entities.Categoria;
 import com.reobotnet.financeiro.enuns.MeioPagamento;
 import com.reobotnet.financeiro.enuns.TipoTransacao;
 import com.reobotnet.financeiro.exceptions.DataLancamentoInvalidaException;
@@ -18,8 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TransacaoService {

@@ -68,7 +68,11 @@ public class TransacaoService {
                     ? transacao.getDataLancamento()
                     : LocalDate.now();
 
-            LocalDate vencimento = dataBase.plusMonths(1).withDayOfMonth(5);
+            // Novo comportamento
+            int dia = dataBase.getDayOfMonth();
+            int mesesParaAdicionar = (dia >= 28) ? 2 : 1;
+
+            LocalDate vencimento = dataBase.plusMonths(mesesParaAdicionar).withDayOfMonth(5);
             transacao.setDataVencimento(vencimento);
         }
     }

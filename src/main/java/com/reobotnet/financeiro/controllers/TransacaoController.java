@@ -54,10 +54,11 @@ public class TransacaoController {
 
     @GetMapping("/saldo")
     public ResponseEntity<SaldoDTO> obterSaldo(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate dataInicial,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate dataFinal
+            @RequestParam(name = "dataInicial", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
+
+            @RequestParam(name = "dataFinal", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal
     ) {
         SaldoDTO saldo = transacaoService.calcularSaldoDetalhado(dataInicial, dataFinal);
         return ResponseEntity.ok(saldo);

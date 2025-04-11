@@ -1,5 +1,14 @@
 package com.reobotnet.financeiro.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReminderItemView {
 
     private String title;
@@ -7,36 +16,6 @@ public class ReminderItemView {
     private ItemView itemView;
     private Object bottomSheet;
 
-    public Object getBottomSheet() {
-        return bottomSheet;
-    }
 
-    public void setBottomSheet(Object bottomSheet) {
-        this.bottomSheet = bottomSheet;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public ItemView getItemView() {
-        return itemView;
-    }
-
-    public void setItemView(ItemView itemView) {
-        this.itemView = itemView;
-    }
 }
 

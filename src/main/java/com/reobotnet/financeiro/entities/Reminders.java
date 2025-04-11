@@ -1,24 +1,16 @@
 package com.reobotnet.financeiro.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Reminders {
     private String title;
-    private List<ReminderItemView> itemViews;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public List<ReminderItemView> getItemViews() {
-        return itemViews;
-    }
-
-    public void setItemViews(List<ReminderItemView> itemViews) {
-        this.itemViews = itemViews;
-    }
+    private List<ItemView> itemViews;
 }

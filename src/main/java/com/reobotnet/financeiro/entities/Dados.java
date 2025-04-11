@@ -7,14 +7,6 @@ public class Dados {
     private Reminders reminders;
     private Object extras;
 
-    public Object getExtras() {
-        return extras;
-    }
-
-    public void setExtras(Object extras) {
-        this.extras = extras;
-    }
-
     public Header getHeader() {
         return header;
     }
@@ -45,5 +37,13 @@ public class Dados {
 
     public void setReminders(Reminders reminders) {
         this.reminders = reminders;
+    }
+
+    public Object getExtras() {
+        return extras;
+    }
+
+    public void setExtras(Object extras) {
+        this.extras = extras;
     }
 }

@@ -3,23 +3,25 @@ package com.reobotnet.financeiro.services;
 import com.reobotnet.financeiro.dtos.CategoriaDTO;
 import com.reobotnet.financeiro.entities.Categoria;
 import com.reobotnet.financeiro.repositories.CategoriaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CategoriaService {
 
-    @Autowired
+
     private CategoriaRepository categoriaRepository;
+
+    public CategoriaService(CategoriaRepository categoriaRepository){
+        this.categoriaRepository = categoriaRepository;
+    }
 
     public List<CategoriaDTO> listarTodas() {
         List<Categoria> categorias = categoriaRepository.findAll();
         return categorias.stream()
-                .map(this::toDTO) // Usando o método manual de conversão
-                .collect(Collectors.toList());
+                .map(this::toDTO)
+                .toList();
     }
 
     public CategoriaDTO salvar(CategoriaDTO categoriaDTO) {

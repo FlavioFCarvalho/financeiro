@@ -1,5 +1,6 @@
 package com.reobotnet.financeiro.controllers;
 
+import com.reobotnet.financeiro.dtos.CategoriaResumoDTO;
 import com.reobotnet.financeiro.dtos.SaldoDTO;
 import com.reobotnet.financeiro.dtos.TransacaoDTO;
 import com.reobotnet.financeiro.services.TransacaoService;
@@ -62,5 +63,13 @@ public class TransacaoController {
     ) {
         SaldoDTO saldo = transacaoService.calcularSaldoDetalhado(dataInicial, dataFinal);
         return ResponseEntity.ok(saldo);
+    }
+
+    @GetMapping("/resumo-categorias")
+    public List<CategoriaResumoDTO> resumoPorCategoria(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal
+    ) {
+        return transacaoService.resumoPorCategoria(dataInicial, dataFinal);
     }
 }

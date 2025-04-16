@@ -1,5 +1,6 @@
 package com.reobotnet.financeiro.services;
 
+import com.reobotnet.financeiro.dtos.CategoriaResumoDTO;
 import com.reobotnet.financeiro.dtos.SaldoDTO;
 import com.reobotnet.financeiro.dtos.TransacaoDTO;
 import com.reobotnet.financeiro.entities.Categoria;
@@ -135,6 +136,10 @@ public class TransacaoService {
         BigDecimal totalDebito = transacaoRepository.somarPorTipoComData(TipoTransacao.DEBITO, dataInicial, dataFinal);
 
         return new SaldoDTO(totalCredito, totalDebito);
+    }
+
+    public List<CategoriaResumoDTO> resumoPorCategoria(LocalDate dataInicial, LocalDate dataFinal) {
+        return transacaoRepository.agruparPorCategoriaComData(dataInicial, dataFinal);
     }
 
 
